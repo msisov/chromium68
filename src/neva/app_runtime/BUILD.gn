@@ -19,9 +19,9 @@ import("//mojo/public/tools/bindings/mojom.gni")
 import("//neva/neva.gni")
 import("//tools/grit/repack.gni")
 
-if (is_webos) {
-  import("//webos/webos_locales.gni")
-}
+#if (is_webos) {
+import("//webos/webos_locales.gni")
+#}
 
 config("app_runtime_cfg") {
   defines = [ "APP_RUNTIME_IMPLEMENTATION" ]
@@ -177,9 +177,9 @@ grit("network_error_strings") {
     "grit/network_error_strings.h",
   ]
 
-  if (is_webos) {
+#  if (is_webos) {
     locales = webos_locales
-  }
+#  }
 
   foreach(locale, locales) {
     outputs += [ "network_error_strings_$locale.pak" ]
@@ -194,9 +194,9 @@ repack_locales("repack") {
     ":network_error_strings",
   ]
 
-  if (is_webos) {
+#  if (is_webos) {
     locales = webos_locales
-  }
+#  }
   input_locales = locales
   output_locales = locales
   copy_data_to_bundle = true
