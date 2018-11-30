@@ -139,6 +139,9 @@ bool LoadsFromCacheOnly(const ResourceRequest& request) {
     case mojom::FetchCacheMode::kValidateCache:
     case mojom::FetchCacheMode::kBypassCache:
     case mojom::FetchCacheMode::kForceCache:
+#if defined(USE_NEVA_APPRUNTIME)
+    case mojom::FetchCacheMode::kPreloadDisableCache:
+#endif
       return false;
     case mojom::FetchCacheMode::kOnlyIfCached:
     case mojom::FetchCacheMode::kUnspecifiedOnlyIfCachedStrict:

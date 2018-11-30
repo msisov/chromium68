@@ -696,11 +696,15 @@ jumbo_component("views") {
       } else if (use_ozone) {
         public += [ "widget/desktop_aura/desktop_screen_ozone.h" ]
         sources += [
-          "widget/desktop_aura/desktop_factory_ozone.cc",
-          "widget/desktop_aura/desktop_factory_ozone.h",
           "widget/desktop_aura/desktop_screen_ozone.cc",
-          "widget/desktop_aura/desktop_window_tree_host_ozone.cc",
         ]
+        if (ozone_platform_wayland_external) {
+          sources += [
+            "widget/desktop_aura/desktop_factory_ozone.cc",
+            "widget/desktop_aura/desktop_factory_ozone.h",
+            "widget/desktop_aura/desktop_window_tree_host_ozone.cc",
+          ]
+        }
       }
       if (is_linux) {
         sources += [

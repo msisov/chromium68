@@ -26,7 +26,7 @@ class WebOSRuntimeDelegate : public content::RuntimeDelegateWebOS {
   virtual ~WebOSRuntimeDelegate();
 
   // Overriden from content::RuntimeDelegateWebOS.
-  LSHandle* GetLunaServiceHandle() override;
+  void* GetLunaServiceHandle() override;
   bool IsForegroundAppEnyo() override;
 };
 

@@ -22,8 +22,8 @@ namespace webos {
 
 WebOSRuntimeDelegate::~WebOSRuntimeDelegate() {}
 
-LSHandle* WebOSRuntimeDelegate::GetLunaServiceHandle() {
-  LSHandle* ls_handle = webos::Runtime::GetInstance()->GetLSHandle();
+void* WebOSRuntimeDelegate::GetLunaServiceHandle() {
+  void* ls_handle = webos::Runtime::GetInstance()->GetLSHandle();
   if (ls_handle)
     return ls_handle;
   return nullptr;

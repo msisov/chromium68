@@ -26,6 +26,8 @@ void MediaPlatformAPI::BufferQueue::Push(
   data_size_ += buffer->data_size();
 }
 
+MediaPlatformAPI::BufferQueue::~BufferQueue() = default;
+
 const std::pair<scoped_refptr<DecoderBuffer>, MediaPlatformAPI::FeedType>
 MediaPlatformAPI::BufferQueue::Front() {
   return queue_.front();

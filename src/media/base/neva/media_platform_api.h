@@ -78,6 +78,7 @@ class MEDIA_EXPORT MediaPlatformAPI
   class BufferQueue {
    public:
     BufferQueue();
+    ~BufferQueue();
     void Push(const scoped_refptr<DecoderBuffer>& buffer, FeedType type);
     const std::pair<scoped_refptr<DecoderBuffer>, FeedType> Front();
     void Pop();

@@ -97,6 +97,9 @@ component("gin") {
   if (use_memory_trace) {
     deps += [ "//gin/neva" ]
   }
+  if (use_neva_appruntime) {
+    deps += [ "//base/neva" ]
+  }
 }
 
 executable("gin_shell") {

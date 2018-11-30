@@ -693,6 +693,10 @@ String Request::cache() const {
       return "force-cache";
     case mojom::FetchCacheMode::kOnlyIfCached:
       return "only-if-cached";
+#if defined(USE_NEVA_APPRUNTIME)
+    case mojom::FetchCacheMode::kPreloadDisableCache:
+      return "preload-disable-cache";
+#endif
     case mojom::FetchCacheMode::kUnspecifiedOnlyIfCachedStrict:
     case mojom::FetchCacheMode::kUnspecifiedForceCacheMiss:
       NOTREACHED();
