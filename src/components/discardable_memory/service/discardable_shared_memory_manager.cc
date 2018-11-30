@@ -151,11 +151,11 @@ class DiscardableMemoryImpl : public base::DiscardableMemory {
   DISALLOW_COPY_AND_ASSIGN(DiscardableMemoryImpl);
 };
 
+#if defined(OS_WEBOS)
 // Returns the reduction factor to be applied to overall system memory when
 // calculating the default memory limit to use for discardable memory.
 size_t GetSystemMemReductionFactor() {
   size_t system_mem_reduction_factor = 10;
-#if defined(OS_WEBOS)
   base::CommandLine& cmd_line = *base::CommandLine::ForCurrentProcess();
   if (cmd_line.HasSwitch(
           discardable_memory::switches::kSharedMemSystemMemReductionFactor)) {
@@ -166,9 +166,9 @@ size_t GetSystemMemReductionFactor() {
                             &reduction_factor))
       system_mem_reduction_factor = reduction_factor;
   }
-#endif
   return system_mem_reduction_factor;
 }
+#endif
 
 // Returns the default memory limit to use for discardable memory, taking
 // the amount physical memory available and other platform specific constraints

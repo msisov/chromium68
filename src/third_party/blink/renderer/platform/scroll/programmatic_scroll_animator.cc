@@ -230,18 +230,19 @@ void ProgrammaticScrollAnimator::Trace(blink::Visitor* visitor) {
 
 #if defined(USE_NEVA_APPRUNTIME)
 bool ProgrammaticScrollAnimator::IsWebOSNativeScrollEnabled() {
-  if (scrollable_area_->IsLocalFrameView()) {
-    LocalFrameView* frame_view = ToLocalFrameView(scrollable_area_.Get());
-    if (Settings* settings = frame_view->GetFrame().GetSettings())
-      return settings->WebOSNativeScrollEnabled();
-  }
+  // TODO(jkim. msisov):It should avoid the access to core folder from platform.
+  // if (scrollable_area_->IsLocalFrameView()) {
+  //   LocalFrameView* frame_view = ToLocalFrameView(scrollable_area_.Get());
+  //   if (Settings* settings = frame_view->GetFrame().GetSettings())
+  //     return settings->WebOSNativeScrollEnabled();
+  // }
 
-  if (scrollable_area_->IsPaintLayerScrollableArea()) {
-    PaintLayerScrollableArea* plsa =
-        ToPaintLayerScrollableArea(scrollable_area_.Get());
-    if (Settings* settings = plsa->GetLayoutBox()->GetFrame()->GetSettings())
-      return settings->WebOSNativeScrollEnabled();
-  }
+  // if (scrollable_area_->IsPaintLayerScrollableArea()) {
+  //   PaintLayerScrollableArea* plsa =
+  //       ToPaintLayerScrollableArea(scrollable_area_.Get());
+  //   if (Settings* settings = plsa->GetLayoutBox()->GetFrame()->GetSettings())
+  //     return settings->WebOSNativeScrollEnabled();
+  // }
 
   return false;
 }

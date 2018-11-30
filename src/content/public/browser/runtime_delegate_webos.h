@@ -17,8 +17,6 @@
 #ifndef CONTENT_PUBLIC_BROWSER_RUNTIME_DELEGATE_WEBOS_H_
 #define CONTENT_PUBLIC_BROWSER_RUNTIME_DELEGATE_WEBOS_H_
 
-#include <lunaservice.h>
-
 #include "content/common/content_export.h"
 
 namespace content {
@@ -34,7 +32,9 @@ class CONTENT_EXPORT RuntimeDelegateWebOS {
  public:
   virtual ~RuntimeDelegateWebOS() {}
 
-  virtual LSHandle* GetLunaServiceHandle() = 0;
+  // TODO(jkim, msisov): Need to check the return type. The priginal type is
+  // LSHandle.
+  virtual void* GetLunaServiceHandle() = 0;
   virtual bool IsForegroundAppEnyo() = 0;
 };
 

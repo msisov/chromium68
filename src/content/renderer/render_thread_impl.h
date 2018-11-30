@@ -599,7 +599,7 @@ class CONTENT_EXPORT RenderThreadImpl
   void OnMemoryPressure(
       base::MemoryPressureListener::MemoryPressureLevel memory_pressure_level);
 
-  void OnLocaleChanged(const std::string& new_locale);
+  void OnLocaleChanged(const std::string& new_locale) override;
 
   bool RendererIsHidden() const;
   void OnRendererHidden();
