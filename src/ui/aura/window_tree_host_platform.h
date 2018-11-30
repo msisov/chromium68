@@ -10,6 +10,7 @@
 #include "base/compiler_specific.h"
 #include "base/macros.h"
 #include "ui/aura/aura_export.h"
+#include "ui/aura/client/window_types.h"
 #include "ui/aura/window_tree_host.h"
 #include "ui/base/ime/neva/input_method_neva_observer.h"
 #include "ui/gfx/native_widget_types.h"
@@ -19,6 +20,7 @@
 namespace ui {
 enum class DomCode;
 class KeyboardHook;
+struct PlatformWindowInitProperties;
 }  // namespace ui
 
 namespace aura {
@@ -61,7 +63,7 @@ class AURA_EXPORT WindowTreeHostPlatform : public WindowTreeHost,
 
   // Creates a ui::PlatformWindow appropriate for the current platform and
   // installs it at as the PlatformWindow for this WindowTreeHostPlatform.
-  void CreateAndSetDefaultPlatformWindow();
+  void CreateAndSetPlatformWindow(ui::PlatformWindowInitProperties properties);
 
   void SetPlatformWindow(std::unique_ptr<ui::PlatformWindow> window);
   ui::PlatformWindow* platform_window() { return platform_window_.get(); }
@@ -77,9 +79,7 @@ class AURA_EXPORT WindowTreeHostPlatform : public WindowTreeHost,
   void OnClosed() override;
   void OnWindowStateChanged(ui::PlatformWindowState new_state) override;
   void OnLostCapture() override;
-  void OnAcceleratedWidgetAvailable(gfx::AcceleratedWidget widget,
-                                    float device_pixel_ratio) override;
-  void OnAcceleratedWidgetDestroying() override;
+  void OnAcceleratedWidgetAvailable(gfx::AcceleratedWidget widget) override;
   void OnAcceleratedWidgetDestroyed() override;
   void OnActivationChanged(bool active) override;
 #if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)

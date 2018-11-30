@@ -92,13 +92,15 @@ class VIEWS_EXPORT DesktopWindowTreeHostPlatform
   void OnClosed() override;
   void OnWindowStateChanged(ui::PlatformWindowState new_state) override;
   void OnCloseRequest() override;
-  void OnAcceleratedWidgetDestroying() override;
   void OnActivationChanged(bool active) override;
 
  private:
   void Relayout();
 
   Widget* GetWidget();
+
+  gfx::Rect ToDIPRect(const gfx::Rect& rect_in_pixels) const;
+  gfx::Rect ToPixelRect(const gfx::Rect& rect_in_dip) const;
 
   internal::NativeWidgetDelegate* const native_widget_delegate_;
   DesktopNativeWidgetAura* const desktop_native_widget_aura_;

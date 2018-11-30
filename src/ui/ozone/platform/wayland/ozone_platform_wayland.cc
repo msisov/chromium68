@@ -18,6 +18,7 @@
 #include "ui/ozone/public/gpu_platform_support_host.h"
 #include "ui/ozone/public/input_controller.h"
 #include "ui/ozone/public/ozone_platform.h"
+#include "ui/platform_window/platform_window_init_properties.h"
 
 #if BUILDFLAG(USE_XKBCOMMON)
 #include "ui/events/ozone/layout/xkb/xkb_evdev_codes.h"
@@ -32,7 +33,15 @@ namespace {
 
 class OzonePlatformWayland : public OzonePlatform {
  public:
-  OzonePlatformWayland() {}
+  OzonePlatformWayland() {
+    // Supporting server-side decorations requires a support of xdg-decorations.
+    // But this protocol has been accepted into the upstream recently, and it
+    // will take time before it is taken by compositors. For now, always use
+    // custom frames and disallow switching to server-side frames.
+    // https://github.com/wayland-project/wayland-protocols/commit/76d1ae8c65739eff3434ef219c58a913ad34e988
+    properties_.custom_frame_pref_default = true;
+    properties_.use_system_title_bar = false;
+  }
   ~OzonePlatformWayland() override {}
 
   // OzonePlatform
@@ -66,10 +75,9 @@ class OzonePlatformWayland : public OzonePlatform {
 
   std::unique_ptr<PlatformWindow> CreatePlatformWindow(
       PlatformWindowDelegate* delegate,
-      const gfx::Rect& bounds) override {
-    auto window =
-        std::make_unique<WaylandWindow>(delegate, connection_.get(), bounds);
-    if (!window->Initialize())
+      PlatformWindowInitProperties properties) override {
+    auto window = std::make_unique<WaylandWindow>(delegate, connection_.get());
+    if (!window->Initialize(std::move(properties)))
       return nullptr;
     return std::move(window);
   }
@@ -116,6 +124,10 @@ class OzonePlatformWayland : public OzonePlatform {
     gpu_platform_support_.reset(CreateStubGpuPlatformSupport());
   }
 
+  const PlatformProperties& GetPlatformProperties() override {
+    return properties_;
+  }
+
  private:
   std::unique_ptr<WaylandConnection> connection_;
   std::unique_ptr<WaylandSurfaceFactory> surface_factory_;
@@ -128,6 +140,8 @@ class OzonePlatformWayland : public OzonePlatform {
 #if BUILDFLAG(USE_XKBCOMMON)
   XkbEvdevCodes xkb_evdev_code_converter_;
 #endif
+
+  PlatformProperties properties_;
 
   DISALLOW_COPY_AND_ASSIGN(OzonePlatformWayland);
 };

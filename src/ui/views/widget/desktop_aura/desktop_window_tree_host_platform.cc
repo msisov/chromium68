@@ -10,13 +10,48 @@
 #include "ui/display/screen.h"
 #include "ui/gfx/geometry/dip_util.h"
 #include "ui/platform_window/platform_window.h"
+#include "ui/platform_window/platform_window_init_properties.h"
 #include "ui/views/corewm/tooltip_aura.h"
 #include "ui/views/widget/desktop_aura/desktop_native_widget_aura.h"
+#include "ui/views/widget/widget_aura_utils.h"
 #include "ui/views/window/native_frame_view.h"
 #include "ui/wm/core/window_util.h"
 
 namespace views {
 
+namespace {
+
+ui::PlatformWindowInitProperties ConvertWidgetInitParamsToInitProperties(
+    const Widget::InitParams& params) {
+  ui::PlatformWindowInitProperties properties;
+
+  switch (params.type) {
+    case Widget::InitParams::TYPE_WINDOW:
+      properties.type = ui::PlatformWindowType::kWindow;
+      break;
+
+    case Widget::InitParams::TYPE_MENU:
+      properties.type = ui::PlatformWindowType::kMenu;
+      break;
+
+    case Widget::InitParams::TYPE_TOOLTIP:
+      properties.type = ui::PlatformWindowType::kTooltip;
+      break;
+
+    default:
+      properties.type = ui::PlatformWindowType::kPopup;
+      break;
+  }
+
+  properties.bounds = params.bounds;
+
+  if (params.parent && params.parent->GetHost())
+    properties.parent_widget = params.parent->GetHost()->GetAcceleratedWidget();
+
+  return properties;
+}
+
+}  // namespace
 ////////////////////////////////////////////////////////////////////////////////
 // DesktopWindowTreeHostPlatform:
 
@@ -41,7 +76,10 @@ void DesktopWindowTreeHostPlatform::SetBoundsInDIP(
 }
 
 void DesktopWindowTreeHostPlatform::Init(const Widget::InitParams& params) {
-  CreateAndSetDefaultPlatformWindow();
+  ui::PlatformWindowInitProperties properties =
+      ConvertWidgetInitParamsToInitProperties(params);
+
+  CreateAndSetPlatformWindow(properties);
   CreateCompositor(viz::FrameSinkId(), params.force_software_compositing);
   aura::WindowTreeHost::OnAcceleratedWidgetAvailable();
   InitHost();
@@ -95,6 +133,8 @@ void DesktopWindowTreeHostPlatform::CloseNow() {
   if (!weak_ref || got_on_closed_)
     return;
 
+  native_widget_delegate_->OnNativeWidgetDestroying();
+
   got_on_closed_ = true;
   desktop_native_widget_aura_->OnHostClosed();
 }
@@ -144,7 +184,7 @@ void DesktopWindowTreeHostPlatform::ShowWindowWithState(
 
 void DesktopWindowTreeHostPlatform::ShowMaximizedWithBounds(
     const gfx::Rect& restored_bounds) {
-  // TODO: support |restored_bounds|.
+  platform_window()->SetRestoredBoundsInPixels(ToPixelRect(restored_bounds));
   ShowWindowWithState(ui::SHOW_STATE_MAXIMIZED);
 }
 
@@ -213,8 +253,12 @@ gfx::Rect DesktopWindowTreeHostPlatform::GetClientAreaBoundsInScreen() const {
 }
 
 gfx::Rect DesktopWindowTreeHostPlatform::GetRestoredBounds() const {
-  NOTIMPLEMENTED_LOG_ONCE();
-  return gfx::Rect(0, 0, 640, 840);
+  gfx::Rect restored_bounds = platform_window()->GetRestoredBoundsInPixels();
+  // When window is resized, |restored bounds| is not set and empty.
+  // If |restored bounds| is empty, it returns the current window size.
+  gfx::Rect bounds =
+      !restored_bounds.IsEmpty() ? restored_bounds : GetBoundsInPixels();
+  return ToDIPRect(bounds);
 }
 
 std::string DesktopWindowTreeHostPlatform::GetWorkspace() const {
@@ -430,10 +474,6 @@ void DesktopWindowTreeHostPlatform::OnCloseRequest() {
   GetWidget()->Close();
 }
 
-void DesktopWindowTreeHostPlatform::OnAcceleratedWidgetDestroying() {
-  native_widget_delegate_->OnNativeWidgetDestroying();
-}
-
 void DesktopWindowTreeHostPlatform::OnActivationChanged(bool active) {
   is_active_ = active;
   aura::WindowTreeHostPlatform::OnActivationChanged(active);
@@ -453,6 +493,20 @@ void DesktopWindowTreeHostPlatform::Relayout() {
 
 Widget* DesktopWindowTreeHostPlatform::GetWidget() {
   return native_widget_delegate_->AsWidget();
+}
+
+gfx::Rect DesktopWindowTreeHostPlatform::ToDIPRect(
+    const gfx::Rect& rect_in_pixels) const {
+  gfx::RectF rect_in_dip = gfx::RectF(rect_in_pixels);
+  GetRootTransform().TransformRectReverse(&rect_in_dip);
+  return gfx::ToEnclosingRect(rect_in_dip);
+}
+
+gfx::Rect DesktopWindowTreeHostPlatform::ToPixelRect(
+    const gfx::Rect& rect_in_dip) const {
+  gfx::RectF rect_in_pixels = gfx::RectF(rect_in_dip);
+  GetRootTransform().TransformRect(&rect_in_pixels);
+  return gfx::ToEnclosingRect(rect_in_pixels);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

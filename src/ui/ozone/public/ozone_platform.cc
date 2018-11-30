@@ -20,6 +20,8 @@ bool g_platform_initialized_gpu = false;
 base::LazyInstance<base::OnceCallback<void(OzonePlatform*)>>::Leaky
     instance_callback = LAZY_INSTANCE_INITIALIZER;
 
+constexpr OzonePlatform::PlatformProperties kDefaultPlatformProperties;
+
 base::Lock& GetOzoneInstanceLock() {
   static base::Lock lock;
   return lock;
@@ -112,6 +114,11 @@ void OzonePlatform::RegisterStartupCallback(
 
 // static
 OzonePlatform* OzonePlatform::instance_ = nullptr;
+
+const OzonePlatform::PlatformProperties&
+OzonePlatform::GetPlatformProperties() {
+  return kDefaultPlatformProperties;
+}
 
 base::MessageLoop::Type OzonePlatform::GetMessageLoopTypeForGpu() {
   return base::MessageLoop::TYPE_DEFAULT;

@@ -18,10 +18,6 @@ namespace display {
 class NativeDisplayDelegate;
 }
 
-namespace gfx {
-class Rect;
-}
-
 namespace service_manager {
 class Connector;
 }
@@ -37,6 +33,8 @@ class PlatformWindow;
 class PlatformWindowDelegate;
 class SurfaceFactoryOzone;
 class SystemInputInjector;
+
+struct PlatformWindowInitProperties;
 
 // Base class for Ozone platform implementations.
 //
@@ -78,6 +76,22 @@ class OZONE_EXPORT OzonePlatform {
     // use mojo. Setting this to true requires calling |AddInterfaces|
     // afterwards in the Viz process and providing a connector as part.
     bool using_mojo = false;
+  };
+
+  // Struct used to indicate platform properties.
+  struct PlatformProperties {
+    // Fuchsia only: set to true when the platforms requires
+    // |view_owner_request| field in PlatformWindowInitProperties when creating
+    // a window.
+    bool needs_view_owner_request = false;
+
+    // Determine whether we should default to native decorations or the custom
+    // frame based on the currently-running window manager.
+    bool custom_frame_pref_default = false;
+
+    // Determine whether switching between system and custom frames is
+    // supported.
+    bool use_system_title_bar = false;
   };
 
   // Ensures the OzonePlatform instance without doing any initialization.
@@ -123,9 +137,13 @@ class OZONE_EXPORT OzonePlatform {
   virtual std::unique_ptr<SystemInputInjector> CreateSystemInputInjector() = 0;
   virtual std::unique_ptr<PlatformWindow> CreatePlatformWindow(
       PlatformWindowDelegate* delegate,
-      const gfx::Rect& bounds) = 0;
+      PlatformWindowInitProperties properties) = 0;
   virtual std::unique_ptr<display::NativeDisplayDelegate>
   CreateNativeDisplayDelegate() = 0;
+
+  // Returns a struct that contains configuration and requirements for the
+  // current platform implementation.
+  virtual const PlatformProperties& GetPlatformProperties();
 
   // Returns the message loop type required for OzonePlatform instance that
   // will be initialized for the GPU process.
