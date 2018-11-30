@@ -265,6 +265,10 @@ int SystemHostResolverCall(const std::string& host,
     return ERR_NAME_NOT_RESOLVED;
 #endif
 
+// TODO(jkim, msisov): Need to find why |ai| is nullptr.
+  if (ai == nullptr)
+    return ERR_NAME_NOT_RESOLVED;
+
   *addrlist = AddressList::CreateFromAddrinfo(ai);
   freeaddrinfo(ai);
   return OK;
