@@ -4,6 +4,7 @@
 
 import("//build/config/ui.gni")
 import("//neva/neva.gni")
+import("//ui/ozone/ozone.gni")
 
 assert(use_ozone)
 
