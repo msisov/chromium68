@@ -31,6 +31,7 @@ struct zwp_linux_buffer_params_v1;
 
 namespace ui {
 
+class WaylandOutputManager;
 class WaylandWindow;
 
 class WaylandConnection : public PlatformEventSource,
@@ -73,20 +74,20 @@ class WaylandConnection : public PlatformEventSource,
   wl_compositor* compositor() { return compositor_.get(); }
   wl_subcompositor* subcompositor() { return subcompositor_.get(); }
   wl_shm* shm() { return shm_.get(); }
-  xdg_shell* shell() { return shell_.get(); }
-  zxdg_shell_v6* shell_v6() { return shell_v6_.get(); }
+  xdg_shell* shell() const { return shell_.get(); }
+  zxdg_shell_v6* shell_v6() const { return shell_v6_.get(); }
   wl_seat* seat() { return seat_.get(); }
   wl_data_device* data_device() { return data_device_->data_device(); }
   zwp_linux_dmabuf_v1* zwp_linux_dmabuf() { return zwp_linux_dmabuf_.get(); }
+  zwp_text_input_manager_v1* text_input_manager_v1() {
+    return text_input_manager_v1_.get();
+  }
 
   WaylandWindow* GetWindow(gfx::AcceleratedWidget widget);
   WaylandWindow* GetCurrentFocusedWindow();
+  WaylandWindow* GetCurrentKeyboardFocusedWindow();
   void AddWindow(gfx::AcceleratedWidget widget, WaylandWindow* window);
   void RemoveWindow(gfx::AcceleratedWidget widget);
-
-  int64_t get_next_display_id() { return next_display_id_++; }
-  const std::vector<std::unique_ptr<WaylandOutput>>& GetOutputList() const;
-  WaylandOutput* PrimaryOutput() const;
 
   void set_serial(uint32_t serial) { serial_ = serial; }
   uint32_t serial() { return serial_; }
@@ -98,6 +99,12 @@ class WaylandConnection : public PlatformEventSource,
 
   // Returns the current pointer, which may be null.
   WaylandPointer* pointer() { return pointer_.get(); }
+
+  WaylandDataSource* drag_data_source() { return drag_data_source_.get(); }
+
+  WaylandOutputManager* wayland_output_manager() const {
+    return wayland_output_manager_.get();
+  }
 
   // Clipboard implementation.
   ClipboardDelegate* GetClipboardDelegate();
@@ -125,7 +132,34 @@ class WaylandConnection : public PlatformEventSource,
   void SetTerminateGpuCallback(
       base::OnceCallback<void(std::string)> terminate_gpu_cb);
 
+  // Starts drag with |data| to be delivered, |operation| supported by the
+  // source side initiated the dragging.
+  void StartDrag(const ui::OSExchangeData& data, int operation);
+  // Finishes drag and drop session. It happens when WaylandDataSource gets
+  // 'OnDnDFinished' or 'OnCancel', which means the drop is performed or
+  // canceled on others.
+  void FinishDragSession(uint32_t dnd_action, WaylandWindow* source_window);
+  // Delivers the data owned by Chromium which initiates drag-and-drop. |buffer|
+  // is an output parameter and it should be filled with the data corresponding
+  // to mime_type.
+  void DeliverDragData(const std::string& mime_type, std::string* buffer);
+  // Requests the data to the platform when Chromium gets drag-and-drop started
+  // by others. Once reading the data from platform is done, |callback| should
+  // be called with the data.
+  void RequestDragData(const std::string& mime_type,
+                       base::OnceCallback<void(const std::string&)> callback);
+
+  // Resets flags and keyboard modifiers.
+  //
+  // This method is specially handy for cases when the WaylandPointer state is
+  // modified by a POINTER_DOWN event, but the respective POINTER_UP event is
+  // not delivered.
+  void ResetPointerFlags();
+
  private:
+  // WaylandInputMethodContextFactory needs access to DispatchUiEvent
+  friend class WaylandInputMethodContextFactory;
+
   void Flush();
   void DispatchUiEvent(Event* event);
 
@@ -197,6 +231,7 @@ class WaylandConnection : public PlatformEventSource,
   wl::Object<xdg_shell> shell_;
   wl::Object<zwp_linux_dmabuf_v1> zwp_linux_dmabuf_;
   wl::Object<zxdg_shell_v6> shell_v6_;
+  wl::Object<zwp_text_input_manager_v1> text_input_manager_v1_;
 
   // Stores a wl_buffer and it's id provided by the GbmBuffer object on the
   // GPU process side.
@@ -215,8 +250,10 @@ class WaylandConnection : public PlatformEventSource,
   std::unique_ptr<WaylandDataDeviceManager> data_device_manager_;
   std::unique_ptr<WaylandDataDevice> data_device_;
   std::unique_ptr<WaylandDataSource> data_source_;
-  std::unique_ptr<WaylandPointer> pointer_;
+  std::unique_ptr<WaylandDataSource> drag_data_source_;
   std::unique_ptr<WaylandKeyboard> keyboard_;
+  std::unique_ptr<WaylandOutputManager> wayland_output_manager_;
+  std::unique_ptr<WaylandPointer> pointer_;
   std::unique_ptr<WaylandTouch> touch_;
 
   bool scheduled_flush_ = false;
@@ -224,9 +261,6 @@ class WaylandConnection : public PlatformEventSource,
   base::MessagePumpLibevent::FdWatchController controller_;
 
   uint32_t serial_ = 0;
-
-  int64_t next_display_id_ = 0;
-  std::vector<std::unique_ptr<WaylandOutput>> output_list_;
 
   // Holds a temporary instance of the client's clipboard content
   // so that we can asynchronously write to it.

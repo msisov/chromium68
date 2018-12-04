@@ -5,6 +5,7 @@
 #include "ui/ozone/platform/wayland/wayland_object.h"
 
 #include <linux-dmabuf-unstable-v1-client-protocol.h>
+#include <text-input-unstable-v1-client-protocol.h>
 #include <wayland-client.h>
 #include <xdg-shell-unstable-v5-client-protocol.h>
 #include <xdg-shell-unstable-v6-client-protocol.h>
@@ -40,6 +41,15 @@ void delete_touch(wl_touch* touch) {
     wl_touch_destroy(touch);
 }
 
+void delete_data_device(wl_data_device* data_device) {
+  if (wl_data_device_get_version(data_device) >=
+      WL_DATA_DEVICE_RELEASE_SINCE_VERSION) {
+    wl_data_device_release(data_device);
+  } else {
+    wl_data_device_destroy(data_device);
+  }
+}
+
 }  // namespace
 
 const wl_interface* ObjectTraits<wl_buffer>::interface = &wl_buffer_interface;
@@ -62,7 +72,7 @@ void (*ObjectTraits<wl_data_device_manager>::deleter)(wl_data_device_manager*) =
 const wl_interface* ObjectTraits<wl_data_device>::interface =
     &wl_data_device_interface;
 void (*ObjectTraits<wl_data_device>::deleter)(wl_data_device*) =
-    &wl_data_device_destroy;
+    &delete_data_device;
 
 const wl_interface* ObjectTraits<wl_data_offer>::interface =
     &wl_data_offer_interface;
@@ -156,5 +166,15 @@ const wl_interface* ObjectTraits<zxdg_positioner_v6>::interface =
     &zxdg_positioner_v6_interface;
 void (*ObjectTraits<zxdg_positioner_v6>::deleter)(zxdg_positioner_v6*) =
     &zxdg_positioner_v6_destroy;
+
+const wl_interface* ObjectTraits<zwp_text_input_manager_v1>::interface =
+    &zwp_text_input_manager_v1_interface;
+void (*ObjectTraits<zwp_text_input_manager_v1>::deleter)(
+    zwp_text_input_manager_v1*) = &zwp_text_input_manager_v1_destroy;
+
+const wl_interface* ObjectTraits<zwp_text_input_v1>::interface =
+    &zwp_text_input_v1_interface;
+void (*ObjectTraits<zwp_text_input_v1>::deleter)(zwp_text_input_v1*) =
+    &zwp_text_input_v1_destroy;
 
 }  // namespace wl
