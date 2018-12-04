@@ -58,13 +58,7 @@ bool GbmPixmapWayland::InitializeBuffer(gfx::Size size,
       break;
     case gfx::BufferUsage::GPU_READ_CPU_READ_WRITE:
     case gfx::BufferUsage::GPU_READ_CPU_READ_WRITE_PERSISTENT:
-      // mmap cannot be used with gbm buffers on a different process. That is,
-      // Linux disallows this and "permission denied" is returned. To overcome
-      // this and make software rasterization working, buffers must be created
-      // on the browser process and gbm_bo_map must be used.
-      // TODO(msisov): add support fir these two buffer usage cases.
-      // https://crbug.com/864914
-      LOG(FATAL) << "This scenario is not supported in Wayland now";
+      flags = GBM_BO_USE_LINEAR;
       break;
     default:
       NOTREACHED() << "Not supported buffer format";
@@ -84,7 +78,7 @@ bool GbmPixmapWayland::InitializeBuffer(gfx::Size size,
 
 void* /* EGLClientBuffer */ GbmPixmapWayland::GetEGLClientBuffer() const {
   //TODO(msisov): check if this is required. In the upstream case, there is no such an API.
-  NOTIMPLEMENTED();
+  NOTIMPLEMENTED_LOG_ONCE();
   return nullptr;
 }
 
@@ -109,11 +103,7 @@ int GbmPixmapWayland::GetDmaBufOffset(size_t plane) const {
 }
 
 uint64_t GbmPixmapWayland::GetDmaBufModifier(size_t plane) const {
-  // TODO(msisov): figure out why returning format modifier results in
-  // EGL_BAD_ALLOC.
-  //
-  // return gbm_bo_->get_format_modifier();
-  return 0;
+  return gbm_bo_->GetFormatModifier();
 }
 
 gfx::BufferFormat GbmPixmapWayland::GetBufferFormat() const {

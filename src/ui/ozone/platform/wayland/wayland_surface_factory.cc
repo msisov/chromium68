@@ -11,6 +11,7 @@
 #include "base/memory/ptr_util.h"
 #include "base/memory/shared_memory.h"
 #include "third_party/skia/include/core/SkSurface.h"
+#include "ui/gfx/linux/client_native_pixmap_dmabuf.h"
 #include "ui/gfx/vsync_provider.h"
 #include "ui/ozone/common/egl_util.h"
 #include "ui/ozone/common/gl_ozone_egl.h"
@@ -23,6 +24,7 @@
 #if defined(WAYLAND_GBM)
 #include "ui/ozone/platform/wayland/gpu/gbm_pixmap_wayland.h"
 #include "ui/ozone/platform/wayland/gpu/gbm_surfaceless_wayland.h"
+#include "ui/ozone/public/ozone_platform.h"
 #endif
 
 namespace ui {
@@ -134,9 +136,8 @@ namespace {
 
 class GLOzoneEGLWayland : public GLOzoneEGL {
  public:
-  GLOzoneEGLWayland(WaylandConnectionProxy* connection,
-                    WaylandSurfaceFactory* surface_factory)
-      : connection_(connection), surface_factory_(surface_factory) {}
+  explicit GLOzoneEGLWayland(WaylandConnectionProxy* connection)
+      : connection_(connection) {}
   ~GLOzoneEGLWayland() override {}
 
   scoped_refptr<gl::GLSurface> CreateViewGLSurface(
@@ -148,8 +149,10 @@ class GLOzoneEGLWayland : public GLOzoneEGL {
     // If there is a gbm device available, use surfaceless gl surface.
     if (!connection_->gbm_device())
       return nullptr;
-    return gl::InitializeGLSurface(
-        new GbmSurfacelessWayland(surface_factory_, window));
+    return gl::InitializeGLSurface(new GbmSurfacelessWayland(
+        static_cast<WaylandSurfaceFactory*>(
+            OzonePlatform::GetInstance()->GetSurfaceFactoryOzone()),
+        window));
 #else
     return nullptr;
 #endif
@@ -164,7 +167,6 @@ class GLOzoneEGLWayland : public GLOzoneEGL {
 
  private:
   WaylandConnectionProxy* connection_ = nullptr;
-  WaylandSurfaceFactory* surface_factory_ = nullptr;
 
   DISALLOW_COPY_AND_ASSIGN(GLOzoneEGLWayland);
 };
@@ -209,8 +211,7 @@ bool GLOzoneEGLWayland::LoadGLES2Bindings(gl::GLImplementation impl) {
 WaylandSurfaceFactory::WaylandSurfaceFactory(WaylandConnectionProxy* connection)
     : connection_(connection) {
   if (connection_)
-    egl_implementation_ =
-        std::make_unique<GLOzoneEGLWayland>(connection_, this);
+    egl_implementation_ = std::make_unique<GLOzoneEGLWayland>(connection_);
 }
 
 WaylandSurfaceFactory::~WaylandSurfaceFactory() {}
@@ -231,9 +232,13 @@ GbmSurfacelessWayland* WaylandSurfaceFactory::GetSurface(
   return it->second;
 }
 
-void WaylandSurfaceFactory::ScheduleBufferSwap(gfx::AcceleratedWidget widget,
-                                               uint32_t buffer_id) {
-  connection_->ScheduleBufferSwap(widget, buffer_id);
+void WaylandSurfaceFactory::ScheduleBufferSwap(
+    gfx::AcceleratedWidget widget,
+    uint32_t buffer_id,
+    const gfx::Rect& damage_region,
+    wl::BufferSwapCallback callback) {
+  connection_->ScheduleBufferSwap(widget, buffer_id, damage_region,
+                                  std::move(callback));
 }
 
 std::unique_ptr<SurfaceOzoneCanvas>
