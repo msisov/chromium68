@@ -78,7 +78,7 @@ bool GbmPixmapWayland::InitializeBuffer(gfx::Size size,
 
 void* /* EGLClientBuffer */ GbmPixmapWayland::GetEGLClientBuffer() const {
   //TODO(msisov): check if this is required. In the upstream case, there is no such an API.
-  NOTIMPLEMENTED();
+  NOTIMPLEMENTED_LOG_ONCE();
   return nullptr;
 }
 
