@@ -72,7 +72,6 @@ void WaylandScreen::OutputHandleMode(void* data,
                                      int32_t width,
                                      int32_t height,
                                      int32_t refresh) {
-  WaylandScreen* screen = static_cast<WaylandScreen*>(data);
   if (flags & WL_OUTPUT_MODE_CURRENT) {
     WaylandScreen* screen = static_cast<WaylandScreen*>(data);
     screen->pending_rect_.set_size(gfx::Size(width, height));
