@@ -52,9 +52,7 @@ class WaylandScreen {
                                int32_t refresh);
 
   static void OutputDone(void* data, struct wl_output* wl_output);
-  static void OutputHandleScale(void* data,
-                                struct wl_output* wl_output,
-                                int32_t factor);
+  static void OutputScale(void *data, struct wl_output *wl_output, int32_t factor);
 
   // The Wayland output this object wraps
   wl_output* output_;
