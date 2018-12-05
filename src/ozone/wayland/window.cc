@@ -84,7 +84,9 @@ void WaylandWindow::SetShellAttributes(ShellType type,
                                        WaylandShellSurface* shell_parent,
                                        int x,
                                        int y) {
+#if defined(OS_WEBOS)
   DCHECK(shell_parent && (type == POPUP));
+#endif
 
   if (!shell_surface_) {
     shell_surface_ =
