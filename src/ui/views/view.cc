@@ -1404,7 +1404,7 @@ bool View::ExceededDragThreshold(const gfx::Vector2d& delta) {
 // Accessibility----------------------------------------------------------------
 
 ViewAccessibility& View::GetViewAccessibility() {
-#if defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(OS_WEBOS)
   NOTREACHED();
 #endif
   if (!view_accessibility_)
