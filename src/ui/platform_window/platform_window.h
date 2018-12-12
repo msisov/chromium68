@@ -32,7 +32,7 @@ class PlatformImeController;
 // underlying platform windowing system (i.e. X11/Win/OSX).
 
 // Added for external ozone wayland port
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
 class PlatformWindow : public WaylandPlatformWindow, public PropertyHandler {
 #else
 class PlatformWindow : public PropertyHandler {

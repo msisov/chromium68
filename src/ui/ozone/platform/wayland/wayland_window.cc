@@ -439,6 +439,10 @@ void WaylandWindow::SetRestoredBoundsInPixels(const gfx::Rect& bounds) {
 gfx::Rect WaylandWindow::GetRestoredBoundsInPixels() const {
   return restored_bounds_;
 }
+  
+void WaylandWindow::SetSurfaceId(int surface_id) {
+  NOTIMPLEMENTED() << " ID: " << surface_id;
+}
 
 bool WaylandWindow::CanDispatchEvent(const PlatformEvent& event) {
   // This window is a nested popup window, all the events must be forwarded
