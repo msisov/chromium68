@@ -69,6 +69,7 @@ WindowTreeHostPlatform::WindowTreeHostPlatform(
 void WindowTreeHostPlatform::CreateAndSetPlatformWindow(
     ui::PlatformWindowInitProperties properties) {
 #if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+  CHECK(ui::OzonePlatform::GetInstance()) << "No ozone instance";
   platform_window_ =
       ui::OzonePlatform::GetInstance()->CreatePlatformWindow(this, std::move(properties));
 #if defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)

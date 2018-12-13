@@ -4,9 +4,7 @@
 
 #include "ui/ozone/platform/wayland/ivi_surface_wrapper.h"
 
-//#include <ivi-application-client-protocol.h>
-//TODO(msisov): add ivi application to third_party/wayland-protocols.
-#include "ozone/wayland/protocol/ivi-application-client-protocol.h"
+#include <ivi-application-client-protocol.h>
 
 #include "ui/ozone/platform/wayland/wayland_connection.h"
 #include "ui/ozone/platform/wayland/wayland_util.h"

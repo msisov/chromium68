@@ -7,8 +7,7 @@
 
 #include <map>
 
-//#include <ivi-application-client-protocol.h>
-#include "ozone/wayland/protocol/ivi-application-client-protocol.h"
+#include <ivi-application-client-protocol.h>
 
 #include "base/files/file.h"
 #include "base/message_loop/message_pump_libevent.h"

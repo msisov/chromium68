@@ -85,6 +85,7 @@ WaylandWindow::WaylandWindow(PlatformWindowDelegate* delegate,
       xdg_shell_objects_factory_(new XDGShellObjectFactory()),
       state_(PlatformWindowState::PLATFORM_WINDOW_STATE_NORMAL),
       pending_state_(PlatformWindowState::PLATFORM_WINDOW_STATE_UNKNOWN) {
+   LOG(ERROR) << "WAYLAND WINDOW";
   // Set a class property key, which allows |this| to be used for interactive
   // events, e.g. move or resize.
   SetWmMoveResizeHandler(this, AsWmMoveResizeHandler());

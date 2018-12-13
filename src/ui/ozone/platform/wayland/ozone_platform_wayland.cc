@@ -95,18 +95,24 @@ class OzonePlatformWayland : public OzonePlatform {
   std::unique_ptr<PlatformWindow> CreatePlatformWindow(
       PlatformWindowDelegate* delegate,
       PlatformWindowInitProperties properties) override {
+    LOG(ERROR) << "CREATE PLATFORM WINDOW";
     // Some unit tests may try to set custom input method context factory
     // after InitializeUI. Thus instead of creating factory in InitializeUI
     // it is set at this point if none exists
     if (!LinuxInputMethodContextFactory::instance() &&
         !wayland_input_method_context_factory_) {
+      LOG(ERROR) << "CREATE CONTEXT";
       wayland_input_method_context_factory_.reset(
           new WaylandInputMethodContextFactory(connection_.get()));
     }
 
+    LOG(ERROR) << "CREATE WAYALDN WINDOW";
     auto window = std::make_unique<WaylandWindow>(delegate, connection_.get());
-    if (!window->Initialize(std::move(properties)))
+    if (!window->Initialize(std::move(properties))) {
+      LOG(ERROR) << "NOT INIT";
       return nullptr;
+    }
+    LOG(ERROR) << "INIT DONE";
     return std::move(window);
   }
 
@@ -135,6 +141,7 @@ class OzonePlatformWayland : public OzonePlatform {
   }
 
   void InitializeUI(const InitParams& args) override {
+    LOG(ERROR) << "INITIALIZEUI";
 #if BUILDFLAG(USE_XKBCOMMON)
     KeyboardLayoutEngineManager::SetKeyboardLayoutEngine(
         std::make_unique<WaylandXkbKeyboardLayoutEngine>(
