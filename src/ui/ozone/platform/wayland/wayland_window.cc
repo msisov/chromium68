@@ -497,6 +497,7 @@ void WaylandWindow::HandleSurfaceConfigure(int32_t width,
                                            bool is_maximized,
                                            bool is_fullscreen,
                                            bool is_activated) {
+  LOG(ERROR) << "HANDLE CONFIGURE " << is_activated << " full " << is_fullscreen << " s " << is_maximized << " w " << width << " h " << height;
   // Propagate the window state information to the client.
   PlatformWindowState old_state = state_;
 

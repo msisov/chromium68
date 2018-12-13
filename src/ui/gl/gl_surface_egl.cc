@@ -1086,6 +1086,7 @@ bool NativeViewGLSurfaceEGL::IsOffscreen() {
 
 gfx::SwapResult NativeViewGLSurfaceEGL::SwapBuffers(
     const PresentationCallback& callback) {
+  LOG(ERROR) << "SWAP BUFFERS";
   TRACE_EVENT2("gpu", "NativeViewGLSurfaceEGL:RealSwapBuffers",
       "width", GetSize().width(),
       "height", GetSize().height());
@@ -1122,6 +1123,8 @@ gfx::SwapResult NativeViewGLSurfaceEGL::SwapBuffers(
     has_swapped_buffers_ = true;
   }
 #endif
+
+  LOG(ERROR) << "BUFFERS SWAPPED";
 
   return scoped_swap_buffers.result();
 }
