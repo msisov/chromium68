@@ -37,11 +37,11 @@ class IviSurfaceWrapper : public XDGSurfaceWrapper {
 
  private:
   // ivi_surface_listener
-  static void Visibility(void *data, struct ivi_surface *ivi_surface,
-                  int32_t visibility);
-  static void Warning(void *data, struct ivi_surface *ivi_surface,
-                      int32_t warning_code, const char *warning_text);
-  
+  static void HandleConfigure(void* data,
+                              struct ivi_surface* shell_surface,
+                              int32_t width,
+                              int32_t height);  
+
   WaylandWindow* wayland_window_;
   
   // TODO(msisov): use wl::Object.

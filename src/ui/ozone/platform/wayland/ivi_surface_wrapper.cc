@@ -25,7 +25,7 @@ bool IviSurfaceWrapper::Initialize(WaylandConnection* connection,
   LOG(ERROR) << __PRETTY_FUNCTION__;
 
   static const struct ivi_surface_listener ivi_surface_listener = {
-    &IviSurfaceWrapper::Visibility, &IviSurfaceWrapper::Warning,
+    &IviSurfaceWrapper::HandleConfigure,
   };
 
   int surface_id = wayland_window_->surface_id();
@@ -83,24 +83,16 @@ void IviSurfaceWrapper::SetWindowGeometry(const gfx::Rect& bounds) {
 }
 
 // static
-void IviSurfaceWrapper::Visibility(void *data,
-                                   struct ivi_surface *ivi_surface,
-                                   int32_t visibility) {
+void IviSurfaceWrapper::HandleConfigure(void* data,
+                              struct ivi_surface* shell_surface,
+                              int32_t width,
+                              int32_t height);  
   IviSurfaceWrapper* surface = static_cast<IviSurfaceWrapper*>(data);
-  bool is_visible = visibility ? true : false;
-  LOG(ERROR) << "Became visible? " << is_visible;
-  surface->wayland_window_->HandleSurfaceConfigure(0 /* width */, 0 /* height */,
+  LOG(ERROR) << "HANDLE CONFIGURE " << width << " H " << height;
+  surface->wayland_window_->HandleSurfaceConfigure(width /* width */, height /* height */,
                                                    false /* is_maximized */,
                                                    false /* is_fullscreen */,
-                                                   is_visible);
-}
-
-// static
-void IviSurfaceWrapper::Warning(void *data,
-                                struct ivi_surface *ivi_surface,
-                                int32_t warning_code,
-                                const char *warning_text) {
-  LOG(ERROR) << "IVI APP ERROR: " << warning_text;
+                                                   true);
 }
 
 }  // namespace ui
