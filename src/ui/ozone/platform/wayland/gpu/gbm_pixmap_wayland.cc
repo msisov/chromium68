@@ -39,46 +39,58 @@ bool GbmPixmapWayland::InitializeBuffer(gfx::Size size,
                                         gfx::BufferUsage usage) {
   TRACE_EVENT1("Wayland", "GbmPixmapWayland::InitializeBuffer", "size",
                size.ToString());
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   uint32_t flags = 0;
   switch (usage) {
     case gfx::BufferUsage::GPU_READ:
-      flags = GBM_BO_USE_LINEAR;
+      flags = (1 << 4);
       break;
     case gfx::BufferUsage::SCANOUT:
       flags = GBM_BO_USE_RENDERING | GBM_BO_USE_SCANOUT;
       break;
     case gfx::BufferUsage::SCANOUT_CAMERA_READ_WRITE:
-      flags = GBM_BO_USE_LINEAR | GBM_BO_USE_WRITE | GBM_BO_USE_SCANOUT;
+      flags = (1 << 4) | GBM_BO_USE_WRITE | GBM_BO_USE_SCANOUT;
       break;
     case gfx::BufferUsage::SCANOUT_CPU_READ_WRITE:
-      flags = GBM_BO_USE_LINEAR | GBM_BO_USE_SCANOUT;
+      flags = (1 << 4) | GBM_BO_USE_SCANOUT;
       break;
     case gfx::BufferUsage::SCANOUT_VDA_WRITE:
       flags = GBM_BO_USE_SCANOUT;
       break;
     case gfx::BufferUsage::GPU_READ_CPU_READ_WRITE:
     case gfx::BufferUsage::GPU_READ_CPU_READ_WRITE_PERSISTENT:
-      flags = GBM_BO_USE_LINEAR;
+      flags = (1 << 4);
       break;
     default:
       NOTREACHED() << "Not supported buffer format";
       break;
   }
-
+  LOG(ERROR) << "HERE";
+  LOG(ERROR) << "HERE";
   const uint32_t fourcc_format = GetFourCCFormatFromBufferFormat(format);
+  LOG(ERROR) << "HERE";
   gbm_bo_ = connection_->gbm_device()->CreateBuffer(fourcc_format, size, flags);
+  LOG(ERROR) << "HERE";
   if (!gbm_bo_) {
+  LOG(ERROR) << "HERE";
     LOG(FATAL) << "Cannot create bo";
+  LOG(ERROR) << "HERE";
     return false;
   }
 
   CreateZwpLinuxDmabuf();
+  LOG(ERROR) << "HERE";
   return true;
 }
 
 void* /* EGLClientBuffer */ GbmPixmapWayland::GetEGLClientBuffer() const {
   //TODO(msisov): check if this is required. In the upstream case, there is no such an API.
   NOTIMPLEMENTED_LOG_ONCE();
+  LOG(ERROR) << "HERE";
+  LOG(ERROR) << "HERE";
+  LOG(ERROR) << "HERE";
+  LOG(ERROR) << "HERE";
+  LOG(ERROR) << "HERE";
   return nullptr;
 }
 
@@ -158,7 +170,9 @@ gfx::NativePixmapHandle GbmPixmapWayland::ExportHandle() {
 }
 
 void GbmPixmapWayland::CreateZwpLinuxDmabuf() {
+  LOG(ERROR) << "HERE";
   uint64_t modifier = gbm_bo_->GetFormatModifier();
+  LOG(ERROR) << "HERE";
 
   std::vector<uint32_t> strides;
   std::vector<uint32_t> offsets;
