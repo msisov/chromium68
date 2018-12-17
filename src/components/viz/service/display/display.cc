@@ -346,6 +346,7 @@ bool Display::DrawAndSwap() {
     }
 
     base::ElapsedTimer draw_timer;
+    LOG(ERROR) << "DRAW";
     renderer_->DecideRenderPassAllocationsForFrame(frame.render_pass_list);
     renderer_->DrawFrame(&frame.render_pass_list, device_scale_factor_,
                          current_surface_size_);
@@ -387,13 +388,14 @@ bool Display::DrawAndSwap() {
                                                  "Display::DrawAndSwap");
 
     cc::benchmark_instrumentation::IssueDisplayRenderingStatsEvent();
+    LOG(ERROR) << "SWAP";
     renderer_->SwapBuffers(std::move(frame.metadata.latency_info),
                            need_presentation_feedback);
     if (scheduler_)
       scheduler_->DidSwapBuffers();
   } else {
     TRACE_EVENT_INSTANT0("viz", "Swap skipped.", TRACE_EVENT_SCOPE_THREAD);
-
+    LOG(ERROR) << "SWAP SKIPPED";
     if (have_damage && !size_matches)
       aggregator_->SetFullDamageForSurface(current_surface_id_);
 
