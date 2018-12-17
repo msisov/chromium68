@@ -86,7 +86,7 @@ void IviSurfaceWrapper::SetWindowGeometry(const gfx::Rect& bounds) {
 void IviSurfaceWrapper::HandleConfigure(void* data,
                               struct ivi_surface* shell_surface,
                               int32_t width,
-                              int32_t height);  
+                              int32_t height) { 
   IviSurfaceWrapper* surface = static_cast<IviSurfaceWrapper*>(data);
   LOG(ERROR) << "HANDLE CONFIGURE " << width << " H " << height;
   surface->wayland_window_->HandleSurfaceConfigure(width /* width */, height /* height */,

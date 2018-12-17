@@ -121,20 +121,24 @@ void MojoAppRuntimeHostImpl::ResetStateToMarkNextPaintForContainer() {
 }
 
 void MojoAppRuntimeHostImpl::WillSwapMeaningfulPaint(double detected_time) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   arriving_meaningful_paint_ = detected_time;
   LoadVisuallyCommittedIfNeed();
 }
 
 void MojoAppRuntimeHostImpl::DidFirstMeaningfulPaint(double fmp_detected) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   first_meaningful_paint_detected_ = fmp_detected;
   LoadVisuallyCommitted();
 }
 
 void MojoAppRuntimeHostImpl::DidNonFirstMeaningfulPaint() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   LoadVisuallyCommitted();
 }
 
 void MojoAppRuntimeHostImpl::LoadVisuallyCommitted() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (load_visually_committed_)
     return;
   if (web_view_delegate_) {
@@ -144,6 +148,7 @@ void MojoAppRuntimeHostImpl::LoadVisuallyCommitted() {
 }
 
 void MojoAppRuntimeHostImpl::LoadVisuallyCommittedIfNeed() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (load_visually_committed_ || first_meaningful_paint_detected_ == .0)
     return;
   if (first_meaningful_paint_detected_ <= arriving_meaningful_paint_) {
@@ -153,11 +158,13 @@ void MojoAppRuntimeHostImpl::LoadVisuallyCommittedIfNeed() {
 }
 
 void MojoAppRuntimeHostImpl::DidClearWindowObject() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (web_view_delegate_)
     web_view_delegate_->DidClearWindowObject();
 }
 
 void MojoAppRuntimeHostImpl::DoLaunchSettingsApplication(int target_id) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 #if defined(OS_WEBOS)
   webos::WebOSLunaService::GetInstance()->LaunchSettingsApplication(target_id);
 #endif
@@ -196,6 +203,7 @@ WebView::WebView(int width, int height, WebViewProfile* profile)
   rvh->SyncRendererPrefs();
   web_preferences_.reset(
       new content::WebPreferences(rvh->GetWebkitPreferences()));
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 }
 
 WebView::~WebView() {
@@ -203,11 +211,13 @@ WebView::~WebView() {
 }
 
 void WebView::SetDelegate(WebViewDelegate* delegate) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   webview_delegate_ = delegate;
   host_interface_->SetDelegate(delegate);
 }
 
 void WebView::CreateWebContents() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::BrowserContext* browser_context =
       profile_->GetBrowserContextAdapter()->GetBrowserContext();
   content::WebContents::CreateParams params(browser_context, nullptr);
@@ -218,18 +228,22 @@ void WebView::CreateWebContents() {
 }
 
 content::WebContents* WebView::GetWebContents() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return web_contents_.get();
 }
 
 void WebView::AddUserStyleSheet(const std::string& sheet) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   web_contents_->InjectCSS(sheet);
 }
 
 std::string WebView::UserAgent() const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return web_contents_->GetUserAgentOverride();
 }
 
 void WebView::LoadUrl(const GURL& url) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::NavigationController::LoadURLParams params(url);
   params.transition_type = ui::PageTransitionFromInt(
       ui::PAGE_TRANSITION_TYPED | ui::PAGE_TRANSITION_FROM_API);
@@ -240,6 +254,7 @@ void WebView::LoadUrl(const GURL& url) {
 }
 
 void WebView::StopLoading() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   int index = web_contents_->GetController().GetPendingEntryIndex();
   if (index != -1)
     web_contents_->GetController().RemoveEntryAtIndex(index);
@@ -249,22 +264,27 @@ void WebView::StopLoading() {
 }
 
 void WebView::LoadExtension(const std::string& name) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   RequestInjectionLoading(name);
 }
 
 void WebView::ClearExtensions() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   RequestClearInjections();
 }
 
 void WebView::ReplaceBaseURL(const GURL& newUrl) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   web_contents_->ReplaceBaseURL(newUrl);
 }
 
 const std::string& WebView::GetUrl() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return web_contents_->GetVisibleURL().spec();
 }
 
 void WebView::SuspendDOM() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (rvh) {
     mojom::AppRuntimeClientAssociatedPtr client;
@@ -274,6 +294,7 @@ void WebView::SuspendDOM() {
 }
 
 void WebView::ResumeDOM() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (rvh) {
     mojom::AppRuntimeClientAssociatedPtr client;
@@ -283,6 +304,7 @@ void WebView::ResumeDOM() {
 }
 
 void WebView::SuspendMedia() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 #if defined(USE_NEVA_MEDIA)
   for (auto* rfh : web_contents_->GetAllFrames())
     rfh->SuspendMedia();
@@ -290,6 +312,7 @@ void WebView::SuspendMedia() {
 }
 
 void WebView::ResumeMedia() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 #if defined(USE_NEVA_MEDIA)
   for (auto* rfh : web_contents_->GetAllFrames())
     rfh->ResumeMedia();
@@ -297,6 +320,7 @@ void WebView::ResumeMedia() {
 }
 
 void WebView::SuspendPaintingAndSetVisibilityHidden() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderWidgetHostViewAura* const host_view =
       static_cast<content::RenderWidgetHostViewAura*>(
           web_contents_->GetRenderViewHost()->GetWidget()->GetView());
@@ -305,6 +329,7 @@ void WebView::SuspendPaintingAndSetVisibilityHidden() {
 }
 
 void WebView::ResumePaintingAndSetVisibilityVisible() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderWidgetHostViewAura* const host_view =
       static_cast<content::RenderWidgetHostViewAura*>(
           web_contents_->GetRenderViewHost()->GetWidget()->GetView());
@@ -313,6 +338,7 @@ void WebView::ResumePaintingAndSetVisibilityVisible() {
 }
 
 void WebView::EnableAggressiveReleasePolicy(bool enable) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderWidgetHostViewAura* const host_view =
       static_cast<content::RenderWidgetHostViewAura*>(
           web_contents_->GetRenderViewHost()->GetWidget()->GetView());
@@ -322,18 +348,22 @@ void WebView::EnableAggressiveReleasePolicy(bool enable) {
 
 bool WebView::SetSkipFrame(bool enable) {
   NOTIMPLEMENTED();
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return true;
 }
 
 void WebView::CommitLoadVisually() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   NOTIMPLEMENTED();
 }
 
 std::string WebView::DocumentTitle() const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return document_title_;
 }
 
 void WebView::RunJavaScript(const std::string& jsCode) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (rvh)
     rvh->GetMainFrame()->Send(new FrameMsg_JavaScriptExecuteRequest(
@@ -342,15 +372,18 @@ void WebView::RunJavaScript(const std::string& jsCode) {
 }
 
 void WebView::RunJavaScriptInAllFrames(const std::string& js_code) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   web_contents_->ExecuteJavaScriptInAllFrames(base::UTF8ToUTF16(js_code));
 }
 
 void WebView::Reload() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   web_contents_->GetController().Reload(content::ReloadType::NONE, false);
   web_contents_->Focus();
 }
 
 int WebView::RenderProcessPid() const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderProcessHost* host = web_contents_->GetMainFrame()->GetProcess();
   if (host)
     return host->GetProcess().Handle();
@@ -358,6 +391,7 @@ int WebView::RenderProcessPid() const {
 }
 
 bool WebView::IsDrmEncrypted(const std::string& url) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 #if defined(USE_APPDRM)
   net::AppDRMFileManager adfm = net::AppDRMFileManager(url);
   return adfm.Check();
@@ -367,6 +401,7 @@ bool WebView::IsDrmEncrypted(const std::string& url) {
 }
 
 std::string WebView::DecryptDrm(const std::string& url) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 #if defined(USE_APPDRM)
   net::AppDRMFileManager adfm = net::AppDRMFileManager(url);
   return adfm.Decrypt();
@@ -376,12 +411,14 @@ std::string WebView::DecryptDrm(const std::string& url) {
 }
 
 int WebView::DevToolsPort() const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return static_cast<AppRuntimeBrowserMainParts*>(
       GetAppRuntimeContentBrowserClient()->GetMainParts())
       ->DevToolsPort();
 }
 
 void WebView::SetInspectable(bool enable) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   AppRuntimeBrowserMainParts* mp =
     static_cast<AppRuntimeBrowserMainParts*>(
       GetAppRuntimeContentBrowserClient()->GetMainParts());
@@ -393,10 +430,12 @@ void WebView::SetInspectable(bool enable) {
 }
 
 void WebView::AddCustomPluginDir(const std::string& directory) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   NOTIMPLEMENTED();
 }
 
 void WebView::SetBackgroundColor(int r, int g, int b, int a) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (rvh) {
     mojom::AppRuntimeClientAssociatedPtr client;
@@ -406,6 +445,7 @@ void WebView::SetBackgroundColor(int r, int g, int b, int a) {
 }
 
 void WebView::SetAllowFakeBoldText(bool allow) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* renderer_prefs =
       web_contents_->GetMutableRendererPrefs();
   if (renderer_prefs->allow_fake_bold_text == allow)
@@ -420,23 +460,27 @@ void WebView::SetAllowFakeBoldText(bool allow) {
 
 void WebView::LoadProgressChanged(content::WebContents* source,
                                   double progress) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     webview_delegate_->OnLoadProgressChanged(progress);
 }
 
 void WebView::NavigationStateChanged(content::WebContents* source,
                                      content::InvalidateTypes changed_flags) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_ && (content::INVALIDATE_TYPE_TITLE & changed_flags))
     webview_delegate_->TitleChanged(base::UTF16ToUTF8(source->GetTitle()));
 }
 
 void WebView::CloseContents(content::WebContents* source) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     webview_delegate_->Close();
 }
 
 gfx::Size WebView::GetSizeForNewRenderView(
     content::WebContents* web_contents) const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (web_contents_->GetContainerBounds().width() == 0
       && web_contents_->GetContainerBounds().height() == 0)
     return gfx::Size(width_, height_);
@@ -445,14 +489,17 @@ gfx::Size WebView::GetSizeForNewRenderView(
 }
 
 bool WebView::ShouldSuppressDialogs(content::WebContents* source) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return should_suppress_dialogs_;
 }
 
 void WebView::SetShouldSuppressDialogs(bool suppress) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   should_suppress_dialogs_ = suppress;
 }
 
 void WebView::SetAppId(const std::string& app_id) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* renderer_prefs =
       web_contents_->GetMutableRendererPrefs();
   if (!renderer_prefs->application_id.compare(app_id))
@@ -466,6 +513,7 @@ void WebView::SetAppId(const std::string& app_id) {
 }
 
 void WebView::SetSecurityOrigin(const std::string& identifier) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   NEVA_DCHECK(!command_line->HasSwitch(switches::kProcessPerSite) &&
               !command_line->HasSwitch(switches::kProcessPerTab) &&
@@ -489,6 +537,7 @@ void WebView::SetSecurityOrigin(const std::string& identifier) {
 }
 
 void WebView::SetAcceptLanguages(const std::string& languages) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   auto* rendererPrefs(web_contents_->GetMutableRendererPrefs());
   if (!rendererPrefs->accept_languages.compare(languages))
     return;
@@ -501,21 +550,25 @@ void WebView::SetAcceptLanguages(const std::string& languages) {
 }
 
 void WebView::SetUseLaunchOptimization(bool enabled, int delay_ms) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   NOTIMPLEMENTED();
 }
 
 void WebView::SetUseEnyoOptimization(bool enabled) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   NOTIMPLEMENTED();
   // TODO(jose.dapena): patch not ported
 }
 
 void WebView::SetAppPreloadHint(bool is_preload) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (rvh)
     rvh->SetAppPreloadHint(is_preload);
 }
 
 void WebView::SetTransparentBackground(bool enable) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderWidgetHostView* const host_view =
       web_contents_->GetRenderWidgetHostView();
   if (host_view)
@@ -523,6 +576,7 @@ void WebView::SetTransparentBackground(bool enable) {
 }
 
 void WebView::SetBoardType(const std::string& board_type) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* renderer_prefs =
       web_contents_->GetMutableRendererPrefs();
   if (!renderer_prefs->board_type.compare(board_type))
@@ -536,6 +590,7 @@ void WebView::SetBoardType(const std::string& board_type) {
 }
 
 void WebView::SetMediaCodecCapability(const std::string& capability) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* renderer_prefs =
       web_contents_->GetMutableRendererPrefs();
   if (!renderer_prefs->media_codec_capability.compare(capability))
@@ -559,6 +614,7 @@ void WebView::UpdatePreferencesAttributeForPrefs(
     content::WebPreferences* preferences,
     WebView::Attribute attribute,
     bool enable) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   switch (attribute) {
     case Attribute::AllowRunningInsecureContent:
       preferences->allow_running_insecure_content = enable;
@@ -617,6 +673,7 @@ void WebView::UpdatePreferencesAttributeForPrefs(
 
 void WebView::UpdatePreferencesAttribute(WebView::Attribute attribute,
                                          bool enable) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   webview_preferences_list_[attribute] = enable;
   UpdatePreferencesAttributeForPrefs(web_preferences_.get(), attribute, enable);
 
@@ -627,6 +684,7 @@ void WebView::UpdatePreferencesAttribute(WebView::Attribute attribute,
 
 void WebView::UpdatePreferencesAttribute(WebView::Attribute attribute,
                                          double value) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   switch (attribute) {
     case Attribute::NetworkStableTimeout:
       web_preferences_->network_stable_timeout = value;
@@ -638,6 +696,7 @@ void WebView::UpdatePreferencesAttribute(WebView::Attribute attribute,
 
 void WebView::SetFontFamily(WebView::FontFamily font_family,
                             const std::string& font) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   switch (font_family) {
     case FontFamily::StandardFont:
       web_preferences_->standard_font_family_map[content::kCommonScript] =
@@ -673,6 +732,7 @@ void WebView::SetFontFamily(WebView::FontFamily font_family,
 }
 
 void WebView::SetFontHintingNone() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* renderer_prefs =
       web_contents_->GetMutableRendererPrefs();
   renderer_prefs->hinting = gfx::FontRenderParams::HINTING_NONE;
@@ -682,6 +742,7 @@ void WebView::SetFontHintingNone() {
 }
 
 void WebView::SetFontHintingSlight() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* rendererPrefs =
       web_contents_->GetMutableRendererPrefs();
   rendererPrefs->hinting = gfx::FontRenderParams::HINTING_SLIGHT;
@@ -691,6 +752,7 @@ void WebView::SetFontHintingSlight() {
 }
 
 void WebView::SetFontHintingMedium() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* rendererPrefs =
       web_contents_->GetMutableRendererPrefs();
   rendererPrefs->hinting = gfx::FontRenderParams::HINTING_MEDIUM;
@@ -700,6 +762,7 @@ void WebView::SetFontHintingMedium() {
 }
 
 void WebView::SetFontHintingFull() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RendererPreferences* rendererPrefs =
       web_contents_->GetMutableRendererPrefs();
   rendererPrefs->hinting = gfx::FontRenderParams::HINTING_FULL;
@@ -709,10 +772,12 @@ void WebView::SetFontHintingFull() {
 }
 
 void WebView::SetActiveOnNonBlankPaint(bool active) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   active_on_non_blank_paint_ = active;
 }
 
 void WebView::SetViewportSize(int width, int height) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (rvh) {
     mojom::AppRuntimeClientAssociatedPtr client;
@@ -723,12 +788,14 @@ void WebView::SetViewportSize(int width, int height) {
 
 void WebView::NotifyMemoryPressure(
     base::MemoryPressureListener::MemoryPressureLevel level) {
-  PMLOG_DEBUG(Memory, "[MemoryPressure] %s => Level: %d", __PRETTY_FUNCTION__,
+  LOG(ERROR) << __PRETTY_FUNCTION__;
+  PMLOG_DEBUG(Memory, "[MemoryPressure] %s => Level: %d", __PRETTY_FUNCTION__;_,
               level);
   base::MemoryPressureListener::NotifyMemoryPressure(level);
 }
 
 void WebView::SetVisible(bool visible) {
+  LOG(ERROR) << __PRETTY_FUNCTION__ << visible;
   if (visible)
     web_contents_->WasShown();
   else
@@ -742,6 +809,7 @@ void WebView::SetDatabaseIdentifier(const std::string& identifier) {
 
 bool WebView::ConvertVisibilityState(WebPageVisibilityState from,
                                      blink::mojom::PageVisibilityState& to) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
     switch (from) {
       case WebPageVisibilityStateVisible:
         to = blink::mojom::PageVisibilityState::kVisible;
@@ -762,6 +830,7 @@ bool WebView::ConvertVisibilityState(WebPageVisibilityState from,
 }
 
 void WebView::SetVisibilityState(WebPageVisibilityState visibility_state) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (!rvh)
     return;
@@ -777,6 +846,7 @@ void WebView::SetVisibilityState(WebPageVisibilityState visibility_state) {
 }
 
 void WebView::DeleteWebStorages(const std::string& identifier) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::BrowserContext* browser_context =
       profile_->GetBrowserContextAdapter()->GetBrowserContext();
   content::StoragePartition* storage_partition =
@@ -788,6 +858,7 @@ void WebView::DeleteWebStorages(const std::string& identifier) {
 }
 
 void WebView::SetFocus(bool focus) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (focus) {
     web_contents_->Focus();
   }
@@ -804,20 +875,24 @@ void WebView::SetFocus(bool focus) {
 }
 
 double WebView::GetZoomFactor() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return content::ZoomLevelToZoomFactor(
       content::HostZoomMap::GetZoomLevel(web_contents_.get()));
 }
 
 void WebView::SetZoomFactor(double factor) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::HostZoomMap::SetZoomLevel(web_contents_.get(),
                                      content::ZoomFactorToZoomLevel(factor));
 }
 
 void WebView::SetDoNotTrack(bool dnt) {
   GetAppRuntimeContentBrowserClient()->SetDoNotTrack(dnt);
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 }
 
 void WebView::ForwardAppRuntimeEvent(AppRuntimeEvent* event) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderWidgetHostView* rwhv =
       web_contents_->GetRenderWidgetHostView();
   if (!rwhv)
@@ -885,15 +960,18 @@ void WebView::ForwardAppRuntimeEvent(AppRuntimeEvent* event) {
 }
 
 bool WebView::CanGoBack() const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return web_contents_->GetController().CanGoBack();
 }
 
 void WebView::GoBack() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   web_contents_->GetController().GoToOffset(-1);
   web_contents_->Focus();
 }
 
 void WebView::SendGetCookiesResponse(const net::CookieList& cookie_list) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   std::string cookie_line =
             net::CanonicalCookie::BuildCookieLine(cookie_list);
   if (webview_delegate_)
@@ -902,6 +980,7 @@ void WebView::SendGetCookiesResponse(const net::CookieList& cookie_list) {
 }
 
 void WebView::RequestGetCookies(const std::string& url) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::BrowserContext* browser_context =
       profile_->GetBrowserContextAdapter()->GetBrowserContext();
   net::CookieStore* cookie_store =
@@ -917,10 +996,12 @@ void WebView::RequestGetCookies(const std::string& url) {
 }
 
 void WebView::SetAdditionalContentsScale(float scale_x, float scale_y) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   NOTIMPLEMENTED();
 }
 
 void WebView::SetHardwareResolution(int width, int height) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderWidgetHostViewAura* const host_view =
       static_cast<content::RenderWidgetHostViewAura*>(
           web_contents_->GetRenderViewHost()->GetWidget()->GetView());
@@ -932,6 +1013,7 @@ void WebView::SetHardwareResolution(int width, int height) {
 }
 
 void WebView::SetEnableHtmlSystemKeyboardAttr(bool enable) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderWidgetHostViewAura* const host_view =
       static_cast<content::RenderWidgetHostViewAura*>(
           web_contents_->GetRenderViewHost()->GetWidget()->GetView());
@@ -943,15 +1025,18 @@ void WebView::SetEnableHtmlSystemKeyboardAttr(bool enable) {
 }
 
 void WebView::RequestInjectionLoading(const std::string& injection_name) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   injection_manager_->RequestLoadExtension(injection_name);
 }
 
 void WebView::RequestClearInjections() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   injection_manager_->RequestClearExtensions();
 }
 
 
 void WebView::ResetStateToMarkNextPaintForContainer() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   host_interface_->ResetStateToMarkNextPaintForContainer();
   content::RenderViewHost* rvh = web_contents_->GetRenderViewHost();
   if (rvh) {
@@ -965,16 +1050,19 @@ void WebView::ResetStateToMarkNextPaintForContainer() {
 // WebView, content::WebContentsObserver implementation:
 
 void WebView::RenderViewCreated(content::RenderViewHost* render_view_host) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   SetSkipFrame(enable_skip_frame_);
 }
 
 void WebView::DidStartLoading() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     webview_delegate_->LoadStarted();
 }
 
 void WebView::DidFinishLoad(content::RenderFrameHost* render_frame_host,
                             const GURL& validated_url) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
 #if defined(ENABLE_PLUGINS)
   if (!GetAppRuntimeContentBrowserClient()->PluginLoaded()) {
     GetAppRuntimeContentBrowserClient()->SetPluginLoaded(true);
@@ -989,6 +1077,7 @@ void WebView::DidFinishLoad(content::RenderFrameHost* render_frame_host,
 
 void WebView::DidUpdateFaviconURL(
     const std::vector<content::FaviconURL>& candidates) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   for (auto& candidate : candidates) {
     if (candidate.icon_type == content::FaviconURL::IconType::kFavicon &&
         !candidate.icon_url.is_empty()) {
@@ -1006,6 +1095,7 @@ void WebView::DidUpdateFaviconURL(
 
 void WebView::DidFinishNavigation(
     content::NavigationHandle* navigation_handle) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (!navigation_handle)
     return;
 
@@ -1023,6 +1113,7 @@ void WebView::DidFailLoad(content::RenderFrameHost* render_frame_host,
                           const GURL& validated_url,
                           int error_code,
                           const base::string16& error_description) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   std::string url =
       validated_url.is_valid() ? validated_url.spec() : std::string();
   if (webview_delegate_) {
@@ -1035,6 +1126,7 @@ void WebView::DidFailLoad(content::RenderFrameHost* render_frame_host,
 }
 
 void WebView::RenderProcessCreated(base::ProcessHandle handle) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   // Helps in initializing resources for the renderer process
   std::string locale =
       GetAppRuntimeContentBrowserClient()->GetApplicationLocale();
@@ -1052,12 +1144,14 @@ void WebView::RenderProcessCreated(base::ProcessHandle handle) {
 }
 
 void WebView::RenderProcessGone(base::TerminationStatus status) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     webview_delegate_->RenderProcessGone();
 }
 
 void WebView::DocumentLoadedInFrame(
     content::RenderFrameHost* render_frame_host) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   // TODO(pikulik): Should be revised!
   if (webview_delegate_ &&
       static_cast<content::RenderFrameHostImpl*>(render_frame_host)
@@ -1067,25 +1161,30 @@ void WebView::DocumentLoadedInFrame(
 }
 
 void WebView::DidReceiveCompositorFrame() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     webview_delegate_->DidSwapCompositorFrame();
 }
 
 void WebView::WillSwapMeaningfulPaint(double detected_time) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   host_interface_->WillSwapMeaningfulPaint(detected_time);
 }
 
 void WebView::TitleWasSet(content::NavigationEntry* entry) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   document_title_ = base::UTF16ToUTF8(entry->GetTitle());
 }
 
 void WebView::LoadingStateChanged(content::WebContents*,
                                   bool to_different_document) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (to_different_document)
     document_title_.clear();
 }
 
 bool WebView::OnMessageReceived(const IPC::Message& message) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(WebView, message)
     IPC_MESSAGE_UNHANDLED(handled = false)
@@ -1094,11 +1193,13 @@ bool WebView::OnMessageReceived(const IPC::Message& message) {
 }
 
 void WebView::DidFrameFocused() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     webview_delegate_->DidFirstFrameFocused();
 }
 
 void WebView::UpdatePreferences() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents()->GetRenderViewHost();
   DCHECK(rvh != nullptr);
   rvh->SyncRendererPrefs();
@@ -1108,21 +1209,25 @@ void WebView::UpdatePreferences() {
 void WebView::EnterFullscreenModeForTab(content::WebContents* web_contents,
                                         const GURL& origin,
                                         const blink::WebFullscreenOptions& options) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   full_screen_ = true;
   NotifyRenderWidgetWasResized();
 }
 
 void WebView::ExitFullscreenModeForTab(content::WebContents* web_contents) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   full_screen_ = false;
   NotifyRenderWidgetWasResized();
 }
 
 bool WebView::IsFullscreenForTabOrPending(
     const content::WebContents* web_contents) const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return full_screen_;
 }
 
 void WebView::NotifyRenderWidgetWasResized() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   content::RenderViewHost* rvh = web_contents()->GetRenderViewHost();
   if (!rvh)
     return;
@@ -1134,6 +1239,7 @@ void WebView::NotifyRenderWidgetWasResized() {
 bool WebView::CheckMediaAccessPermission(content::RenderFrameHost* render_frame_host,
                                          const GURL& security_origin,
                                          content::MediaStreamType type) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (!webview_delegate_)
     return false;
 
@@ -1152,6 +1258,7 @@ void WebView::RequestMediaAccessPermission(
     content::WebContents* web_contents,
     const content::MediaStreamRequest& request,
     const content::MediaResponseCallback& callback) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   media_capture_util::DevicesDispatcher::GetInstance()
       ->ProcessMediaAccessRequest(
           web_contents, request, webview_delegate_->AcceptsVideoCapture(),
@@ -1162,6 +1269,7 @@ bool WebView::DecidePolicyForResponse(bool isMainFrame,
                                       int statusCode,
                                       const GURL& url,
                                       const base::string16& statusText) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     return webview_delegate_->DecidePolicyForResponse(
         isMainFrame, statusCode, url.spec(), base::UTF16ToUTF8(statusText));
@@ -1170,16 +1278,19 @@ bool WebView::DecidePolicyForResponse(bool isMainFrame,
 }
 
 WebViewProfile* WebView::GetProfile() const {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   return profile_;
 }
 
 void WebView::SetProfile(WebViewProfile* profile) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   // FIXME: Possible memory leak. We need to destroy previous profile if
   // it's not default one. Default profile is shared between all webview.
   profile_ = profile;
 }
 
 void WebView::OverrideWebkitPrefs(content::WebPreferences* prefs) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (!web_preferences_)
     return;
 
@@ -1203,21 +1314,25 @@ void WebView::OverrideWebkitPrefs(content::WebPreferences* prefs) {
 }
 
 void WebView::DidHistoryBackOnTopPage() {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   if (webview_delegate_)
     webview_delegate_->DidHistoryBackOnTopPage();
 }
 
 void WebView::SetV8SnapshotPath(const std::string& v8_snapshot_path) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   GetAppRuntimeContentBrowserClient()->SetV8SnapshotPath(
       web_contents_->GetMainFrame()->GetProcess()->GetID(), v8_snapshot_path);
 }
 
 void WebView::SetV8ExtraFlags(const std::string& v8_extra_flags) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   GetAppRuntimeContentBrowserClient()->SetV8ExtraFlags(
       web_contents_->GetMainFrame()->GetProcess()->GetID(), v8_extra_flags);
 }
 
 void WebView::SetUseNativeScroll(bool use_native_scroll) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   GetAppRuntimeContentBrowserClient()->SetUseNativeScroll(
       web_contents_->GetMainFrame()->GetProcess()->GetID(), use_native_scroll);
 }
