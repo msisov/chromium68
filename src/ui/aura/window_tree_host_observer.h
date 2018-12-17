@@ -33,7 +33,7 @@ class AURA_EXPORT WindowTreeHostObserver {
   // Called when the accelerated widget is overridden for the host.
   virtual void OnAcceleratedWidgetOverridden(WindowTreeHost* host) {}
 
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
   // Called when the host's state has changed.
   virtual void OnWindowHostStateChanged(WindowTreeHost* host, ui::WidgetState new_state) {}
 #endif

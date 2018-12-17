@@ -21,6 +21,10 @@
 #include "ui/views/window/native_frame_view.h"
 #include "ui/wm/core/window_util.h"
 
+#if defined(USE_OZONE) && defined(USE_NEVA_APPRUNTIME)
+#include "ui/views/widget/desktop_aura/neva/native_event_delegate.h"
+#endif
+
 namespace views {
 
 namespace {
@@ -501,6 +505,7 @@ void DesktopWindowTreeHostPlatform::OnClosed() {
 
 void DesktopWindowTreeHostPlatform::OnWindowStateChanged(
     ui::PlatformWindowState new_state) {
+  WindowTreeHostPlatform::OnWindowStateChanged(new_state);
   // Propagate minimization/restore to compositor to avoid drawing 'blank'
   // frames that could be treated as previews, which show content even if a
   // window is minimized.
@@ -525,6 +530,19 @@ void DesktopWindowTreeHostPlatform::OnActivationChanged(bool active) {
   aura::WindowTreeHostPlatform::OnActivationChanged(active);
   desktop_native_widget_aura_->HandleActivationChanged(active);
 }
+
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+void DesktopWindowTreeHostPlatform::OnWindowHostStateChanged(ui::WidgetState new_state) {
+  WindowTreeHostPlatform::OnWindowHostStateChanged(new_state);
+#if defined(USE_NEVA_APPRUNTIME)
+  views::NativeEventDelegate* native_event_delegate =
+      desktop_native_widget_aura_->GetNativeEventDelegate();
+
+  if (native_event_delegate)
+    native_event_delegate->WindowHostStateChanged(new_state);
+#endif  
+}
+#endif
 
 void DesktopWindowTreeHostPlatform::Relayout() {
   Widget* widget = native_widget_delegate_->AsWidget();

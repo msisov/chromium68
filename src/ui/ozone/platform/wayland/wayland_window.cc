@@ -555,11 +555,20 @@ void WaylandWindow::HandleSurfaceConfigure(int32_t width,
   if (is_normal && state_changed)
     restored_bounds_ = gfx::Rect();
 
-  if (state_changed)
-    delegate_->OnWindowStateChanged(state_);
+  if (state_changed) 
+    LOG(ERROR) << "CHANGED";
+  else
+    LOG(ERROR) << "KINDA NOT CHANGED, BUT WE CONTINUE";
 
-  if (did_active_change)
+  delegate_->OnWindowStateChanged(state_);
+
+  LOG(ERROR) << "Did active change?";
+  if (did_active_change) {
+    LOG(ERROR) << "YES";
     delegate_->OnActivationChanged(is_active_);
+  } else {
+    LOG(ERROR) << "NO";
+  }
 
   MaybeTriggerPendingStateChange();
 }

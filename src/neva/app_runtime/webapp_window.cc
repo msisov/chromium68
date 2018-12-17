@@ -435,6 +435,8 @@ void WebAppWindow::WindowHostStateChanged(ui::WidgetState new_state) {
   if (window_host_state_ == new_state)
     return;
 
+  LOG(ERROR) << "WindowHostStateChanged";
+
   window_host_state_ = new_state;
 
   AppRuntimeEvent app_runtime_event(AppRuntimeEvent::Type::WindowStateChange);

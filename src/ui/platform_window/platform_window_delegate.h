@@ -8,7 +8,7 @@
 #include "ui/gfx/native_widget_types.h"
 
 // Added for external ozone wayland port
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
 #include "ui/platform_window/wayland_external/wayland_platform_window_delegate.h"
 #endif
 
@@ -29,7 +29,7 @@ enum PlatformWindowState {
 };
 
 // Added for external ozone wayland port
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
 class PlatformWindowDelegate : public WaylandPlatformWindowDelegate {
 #else
 class PlatformWindowDelegate {

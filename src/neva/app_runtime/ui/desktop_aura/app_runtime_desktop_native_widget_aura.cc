@@ -42,6 +42,7 @@ void AppRuntimeDesktopNativeWidgetAura::SetNativeEventDelegate(
 }
 
 views::NativeEventDelegate* AppRuntimeDesktopNativeWidgetAura::GetNativeEventDelegate() const {
+  LOG(ERROR) << "GET NATIVE EVENT";
   return native_event_delegate_;
 }
 

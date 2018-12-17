@@ -250,7 +250,7 @@ class AURA_EXPORT WindowTreeHost : public ui::internal::InputMethodDelegate,
   void OnHostCloseRequested();
   void OnHostActivated();
   void OnHostLostWindowCapture();
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
   void OnWindowHostStateChanged(ui::WidgetState new_state);
 #endif
 

@@ -184,6 +184,7 @@ WindowTreeHostPlatform::GetKeyboardLayoutMap() {
 }
 
 void WindowTreeHostPlatform::SetWindowSurfaceId(int surface_id) {
+  LOG(ERROR) << "SET ID " << surface_id;
   platform_window_->SetSurfaceId(surface_id);
 }
 
@@ -273,11 +274,39 @@ void WindowTreeHostPlatform::OnCloseRequest() {
 void WindowTreeHostPlatform::OnClosed() {}
 
 void WindowTreeHostPlatform::OnWindowStateChanged(
-    ui::PlatformWindowState new_state) {}
+    ui::PlatformWindowState new_state) {
+  LOG(ERROR) << " ONE WINDOW STATE CHANGED";
+  ui::WidgetState state;
+  switch (new_state) {
+    case ui::PlatformWindowState::PLATFORM_WINDOW_STATE_MAXIMIZED:
+      LOG(ERROR) << "MAXIMIZED";
+      state = ui::WidgetState::MAXIMIZED;
+      break;
+    case ui::PlatformWindowState::PLATFORM_WINDOW_STATE_MINIMIZED:
+      LOG(ERROR) << "MINIMIZED";
+      state = ui::WidgetState::MINIMIZED;
+      break;
+    case ui::PlatformWindowState::PLATFORM_WINDOW_STATE_FULLSCREEN:
+      LOG(ERROR) << "FULLSCREEN";
+      state = ui::WidgetState::FULLSCREEN;
+      break;
+    case ui::PlatformWindowState::PLATFORM_WINDOW_STATE_NORMAL:
+      LOG(ERROR) << "SHOW";
+      state = ui::WidgetState::SHOW;
+      break;
+    default:
+      LOG(ERROR) << "HIDE";
+      state = ui::WidgetState::HIDE;
+      break;
+  }
 
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+  OnWindowHostStateChanged(state);
+}
+
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
 void WindowTreeHostPlatform::OnWindowHostStateChanged(
     ui::WidgetState new_state) {
+  LOG(ERROR) << __PRETTY_FUNCTION__;
   WindowTreeHost::OnWindowHostStateChanged(new_state);
 }
 #endif
@@ -301,6 +330,7 @@ void WindowTreeHostPlatform::OnAcceleratedWidgetDestroyed() {
 }
 
 void WindowTreeHostPlatform::OnActivationChanged(bool active) {
+  LOG(ERROR) << "ON ACTIVE " << active;
   if (active)
     OnHostActivated();
 }

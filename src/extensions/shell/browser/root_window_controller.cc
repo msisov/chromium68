@@ -181,7 +181,7 @@ void RootWindowController::OnHostCloseRequested(aura::WindowTreeHost* host) {
   desktop_delegate_->CloseRootWindowController(this);
 }
 
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
 void RootWindowController::OnWindowHostStateChanged(aura::WindowTreeHost* host,
                                                     ui::WidgetState new_state) {
   if (app_windows_.empty())

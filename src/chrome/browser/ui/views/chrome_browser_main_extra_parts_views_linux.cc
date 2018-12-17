@@ -31,7 +31,7 @@
 #endif
 #include "ui/views/widget/native_widget_aura.h"
 // Added for ozone-wayland port
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
 #include "ozone/ui/webui/ozone_webui.h"
 #endif
 
@@ -87,7 +87,7 @@ void ChromeBrowserMainExtraPartsViewsLinux::PreEarlyInitialization() {
   views::LinuxUI::SetInstance(gtk2_ui);
 #endif
 // Added for ozone-wayland port
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
   views::LinuxUI::SetInstance(BuildWebUI());
 #endif
 }

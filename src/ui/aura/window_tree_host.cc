@@ -420,7 +420,7 @@ void WindowTreeHost::OnHostCloseRequested() {
     observer.OnHostCloseRequested(this);
 }
 
-#if defined(USE_OZONE) && defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
 void WindowTreeHost::OnWindowHostStateChanged(ui::WidgetState new_state) {
   for (WindowTreeHostObserver& observer : observers_)
     observer.OnWindowHostStateChanged(this, new_state);

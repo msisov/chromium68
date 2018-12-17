@@ -96,6 +96,9 @@ class VIEWS_EXPORT DesktopWindowTreeHostPlatform
   void OnWindowStateChanged(ui::PlatformWindowState new_state) override;
   void OnCloseRequest() override;
   void OnActivationChanged(bool active) override;
+#if defined(USE_OZONE) || defined(OZONE_PLATFORM_WAYLAND_EXTERNAL)
+  void OnWindowHostStateChanged(ui::WidgetState new_state) override;
+#endif
 
  private:
   FRIEND_TEST_ALL_PREFIXES(DesktopWindowTreeHostPlatformTest, HitTest);
