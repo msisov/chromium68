@@ -156,10 +156,15 @@ void WebAppWindowBase::SetWindowProperty(const std::string& name,
 }
 
 void WebAppWindowBase::SetWindowSurfaceId(int surface_id) {
-  if (webapp_window_)
+  LOG(ERROR) << __func__
+             << "surface id is " << surface_id;
+  if (webapp_window_) {
+    LOG(ERROR) << "SET!!! " << surface_id;
     webapp_window_->SetWindowSurfaceId(surface_id);
-  else
+  } else {
+    LOG(ERROR) << "SETpending !!! " << surface_id;
     pending_surface_id_ = surface_id;
+  }
 }
 
 void WebAppWindowBase::SetOpacity(float opacity) {

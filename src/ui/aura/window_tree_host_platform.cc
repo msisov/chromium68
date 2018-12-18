@@ -184,11 +184,6 @@ WindowTreeHostPlatform::GetKeyboardLayoutMap() {
   return {};
 }
 
-void WindowTreeHostPlatform::SetWindowSurfaceId(int surface_id) {
-  LOG(ERROR) << "SET ID " << surface_id;
-  platform_window_->SetSurfaceId(surface_id);
-}
-
 void WindowTreeHostPlatform::SetCursorNative(gfx::NativeCursor cursor) {
   if (cursor == current_cursor_)
     return;

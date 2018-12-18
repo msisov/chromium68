@@ -32,6 +32,7 @@ bool IviSurfaceWrapper::Initialize(WaylandConnection* connection,
   // The window_manager on AGL handles surface_id 0 as an invalid id.
   if (surface_id == 0)
     surface_id = static_cast<int>(getpid());
+  LOG(ERROR) << "Surface id on ivi surface " << surface_id;
 
   ivi_surface_ = ivi_application_surface_create(connection->ivi_shell(),
                                                 surface_id, surface);

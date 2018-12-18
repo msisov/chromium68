@@ -318,10 +318,14 @@ void WebAppWindow::SetWindowProperty(const std::string& name,
 }
 
 void WebAppWindow::SetWindowSurfaceId(int surface_id) {
+  LOG(ERROR) << __func__
+             << "surface id is " << surface_id;
   window_surface_id_ = surface_id;
 
   if (!host_)
     return;
+
+  LOG(ERROR) << "SetID! " << surface_id;
 
   host_->SetWindowSurfaceId(surface_id);
 }
@@ -664,8 +668,11 @@ void WebAppWindow::InitWindow() {
                                            desktop_native_widget_aura_);
 
   if (host_) {
-    if (window_surface_id_)
+    if (window_surface_id_) {
+      LOG(ERROR) << __func__
+             << "surface id is " << window_surface_id_;
       host_->SetWindowSurfaceId(window_surface_id_);
+    }
 
     aura::WindowTreeHost* wth = host_->AsWindowTreeHost();
     DCHECK(wth) << "aura::WindowTreeHost is unavailable";

@@ -49,7 +49,7 @@ class AURA_EXPORT WindowTreeHostNeva {
   virtual void SetUseVirtualKeyboard(bool enable) {}
   virtual void SetWindowProperty(const std::string& name,
                                  const std::string& value) {}
-  virtual void SetWindowSurfaceId(int surface_id) {}
+  virtual void SetWindowSurfaceId(int surface_id) { LOG(ERROR) << __PRETTY_FUNCTION__; LOG(ERROR) << "ID " << surface_id; }
   virtual void XInputActivate(const std::string& type) {}
   virtual void XInputDeactivate() {}
   virtual void XInputInvokeAction(uint32_t keysym,

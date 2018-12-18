@@ -119,6 +119,8 @@ WaylandWindow* WaylandWindow::FromSurface(wl_surface* surface) {
 bool WaylandWindow::Initialize(PlatformWindowInitProperties properties) {
   DCHECK(xdg_shell_objects_factory_);
 
+  surface_id_ = properties.surface_id;
+  LOG(ERROR) << "SURFACE ID " << surface_id_;
   bounds_ = properties.bounds;
   parent_window_ = GetParentWindow(properties.parent_widget);
 
@@ -450,10 +452,10 @@ gfx::Rect WaylandWindow::GetRestoredBoundsInPixels() const {
 }
   
 void WaylandWindow::SetSurfaceId(int surface_id) {
-  LOG(ERROR) << " ID: " << surface_id;
-  surface_id_ = surface_id;
+  NOTREACHED() << "WaylandWindow gets the surface id from the "
+    "PlatformWindowInitProperties passed to ::Initialize method";
 }
-
+  
 bool WaylandWindow::CanDispatchEvent(const PlatformEvent& event) {
   // This window is a nested popup window, all the events must be forwarded
   // to the main popup window.
